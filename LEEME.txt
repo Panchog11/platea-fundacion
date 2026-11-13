@@ -1,0 +1,34 @@
+PLATEA DE FUNDACION - Calculo de plateas por elementos finitos
+==============================================================
+
+COMO USAR
+1. Abrir "Platea.html" con doble clic (Chrome o Edge). Funciona sin internet.
+   La carpeta "js" debe quedar junto al archivo Platea.html.
+2. Panel izquierdo: datos generales, suelo y armadura base.
+3. Pestana "Columnas y cargas": ubicacion (x, y), seccion y cargas de
+   servicio y ultimas (N, Vx, Vy, Mx, My, Mz). Se puede pegar desde Excel.
+4. Pestana "Refuerzos": zonas de refuerzo manuales, bajo columnas, o
+   "Sugerir refuerzos automaticos".
+5. Planta / Axonometrica / Cortes: mapas de esfuerzos y diagramas.
+6. Resultados: resumen de todas las verificaciones.
+7. Botones superiores:
+   - Planos DXF: plantas (general, armadura inferior y superior),
+     cortes A-A y B-B, planilla de doblado y rotulo. Unidades: metros.
+   - Memoria: memoria de calculo en Arial (Imprimir -> Guardar como PDF).
+   - Memoria Word: la misma memoria en .doc con imagenes.
+   - Guardar / Abrir: proyecto en archivo .json.
+   El proyecto en curso se guarda automaticamente en el navegador.
+
+DWG / DWF
+El navegador no puede escribir DWG/DWF (formatos cerrados de Autodesk).
+El DXF se abre directamente en AutoCAD:
+ - DWG: abrir el .dxf y "Guardar como" -> DWG (o usar ODA File Converter, gratuito).
+ - DWF: en AutoCAD, "Publicar" / "Exportar" -> DWF.
+
+METODO
+Placa gruesa Reissner-Mindlin (elemento MITC4) sobre resortes de Winkler,
+con resortes solo a compresion (despegue). Diseno CIRSOC 201-2005:
+flexion con momentos de Wood-Armer, corte, punzonado con transferencia
+de momento, longitudes de anclaje y empalme. Suelo: tensiones, capacidad
+portante (Brinch Hansen/Vesic), asentamientos, distorsion y deslizamiento.
+Los resultados deben ser revisados por el profesional responsable.

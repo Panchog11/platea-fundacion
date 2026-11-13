@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cálculo de Platea de Fundación</title>
+<style>
+:root{--azul:#1d3557;--azul2:#2a4d7a;--borde:#d5dce4;--fondo:#f3f5f8;--txt:#1b2430;--suave:#64748b;--ok:#15803d;--no:#c0251c;--inf:#1d6fd8;--sup:#d0342c}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:var(--txt);background:var(--fondo)}
+header{height:52px;background:var(--azul);color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}
+header h1{font-size:16px;margin:0 14px 0 0;white-space:nowrap;font-weight:bold}
+header .sp{flex:1}
+button{font-family:inherit;font-size:12.5px;border:1px solid var(--borde);background:#fff;color:var(--txt);padding:6px 10px;border-radius:5px;cursor:pointer;white-space:nowrap}
+button:hover{background:#eef3f9}
+header button{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.25)}
+header button:hover{background:rgba(255,255,255,.2)}
+header button.prim,button.prim{background:#f4a261;border-color:#f4a261;color:#1b1b1b;font-weight:bold}
+header button.prim:hover,button.prim:hover{background:#f7b47d}
+.app{display:flex;height:calc(100% - 52px - 26px)}
+aside{width:340px;min-width:300px;background:#fff;border-right:1px solid var(--borde);display:flex;flex-direction:column}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+.tabs{display:flex;border-bottom:1px solid var(--borde);background:#fff;overflow-x:auto;flex-shrink:0}
+.tabs button{border:none;border-bottom:3px solid transparent;border-radius:0;background:none;padding:10px 12px;color:var(--suave);font-weight:bold}
+.tabs button.on{color:var(--azul);border-bottom-color:var(--azul)}
+.panel{flex:1;overflow:auto;padding:10px 12px}
+.grp{border:1px solid var(--borde);border-radius:6px;margin-bottom:10px;background:#fff}
+.grp h3{margin:0;padding:7px 10px;font-size:12.5px;background:#eef2f7;border-bottom:1px solid var(--borde);border-radius:6px 6px 0 0;color:var(--azul)}
+.grp .bd{padding:6px 10px}
+.fld{display:grid;grid-template-columns:1fr 92px 54px;align-items:center;gap:6px;padding:3px 0}
+.fld label{color:#334155}
+.fld .u{color:var(--suave);font-size:11px}
+.fld.txt{grid-template-columns:1fr 2fr}
+input,select{font-family:inherit;font-size:12.5px;border:1px solid #c5ced8;border-radius:4px;padding:4px 5px;width:100%;background:#fff}
+input:focus,select:focus{outline:2px solid #9cc3f5;border-color:#6aa4ec}
+input[type=checkbox]{width:auto}
+.help{font-size:11px;color:var(--suave);margin:4px 0 2px;line-height:1.35}
+.tb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 10px;background:#fff;border-bottom:1px solid var(--borde);flex-shrink:0}
+.tb label{display:flex;gap:4px;align-items:center;color:#334155}
+.tb select{width:auto}
+.view{flex:1;position:relative;overflow:auto;background:#fff}
+.view canvas{display:block;width:100%;height:100%}
+.hidden{display:none!important}
+table.t{border-collapse:collapse;font-size:12px;background:#fff}
+table.t th,table.t td{border:1px solid var(--borde);padding:3px 5px;text-align:center;white-space:nowrap}
+table.t th{background:#eef2f7;color:var(--azul);position:sticky;top:0;z-index:1}
+table.t th.gs{background:#e3f0e6;color:#1f5130}
+table.t th.gu{background:#f9e6e4;color:#7a1f19}
+table.t input,table.t select{width:62px;padding:3px 4px;text-align:right}
+table.t input.id{width:52px;text-align:left}
+table.t tr.sel td{background:#fff3e0}
+.wide{width:100%}
+.ok{color:var(--ok);font-weight:bold}.no{color:var(--no);font-weight:bold}
+.card{border:1px solid var(--borde);border-radius:8px;background:#fff;padding:12px;margin:10px}
+.banner{padding:12px 16px;border-radius:8px;margin:10px;font-size:15px;font-weight:bold}
+.banner.ok{background:#e7f6ec;border:1px solid #a6dbb7;color:var(--ok)}
+.banner.no{background:#fdecea;border:1px solid #f2b8b2;color:var(--no)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin:10px}
+.kpi{background:#fff;border:1px solid var(--borde);border-radius:8px;padding:9px 11px}
+.kpi .v{font-size:19px;font-weight:bold;color:var(--azul)}
+.kpi .l{font-size:11px;color:var(--suave)}
+.bar{height:6px;background:#e5e9ef;border-radius:3px;overflow:hidden;margin-top:3px;min-width:70px}
+.bar i{display:block;height:100%}
+#tip{position:fixed;pointer-events:none;background:rgba(20,30,45,.93);color:#fff;font-size:11.5px;padding:7px 9px;border-radius:6px;line-height:1.45;z-index:50;display:none;max-width:280px}
+footer{height:26px;background:#fff;border-top:1px solid var(--borde);display:flex;align-items:center;padding:0 12px;gap:16px;font-size:12px;color:var(--suave)}
+footer .est{font-weight:bold}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:60}
+.modal .box{background:#fff;border-radius:10px;padding:16px;min-width:360px;max-width:760px;max-height:85vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.modal h3{margin:0 0 10px;color:var(--azul)}
+.modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+textarea{width:100%;font-family:Consolas,monospace;font-size:12px}
+.split{display:flex;gap:0;flex:1;min-height:0}
+.split>.izq{flex:1.1;overflow:auto;border-right:1px solid var(--borde)}
+.split>.der{flex:1;position:relative;min-width:300px}
+.lg{display:flex;gap:10px;font-size:11px;color:var(--suave);align-items:center}
+.lg i{display:inline-block;width:14px;height:10px;border:2px solid;margin-right:3px;vertical-align:middle}
+.chip{display:inline-block;padding:1px 6px;border-radius:9px;font-size:11px;font-weight:bold}
+.chip.inf{background:#e3eefc;color:var(--inf)}.chip.sup{background:#fde8e6;color:var(--sup)}.chip.auto{background:#eee;color:#555}
+@media (max-width:900px){.app{flex-direction:column;height:auto}aside{width:100%;max-height:none}main{min-height:80vh}header{height:auto;flex-wrap:wrap;padding:8px}.app{height:auto}}
+</style>
+</head>
+<body>
+<header>
+  <h1>▦ Platea de Fundación</h1>
+  <button id="bEj" title="Cargar un proyecto de ejemplo">Ejemplo</button>
+  <button id="bNuevo">Nuevo</button>
+  <button id="bAbrir" title="Abrir proyecto .json">Abrir…</button>
+  <button id="bGuardar" title="Guardar proyecto .json">Guardar</button>
+  <span class="sp"></span>
+  <label style="color:#fff;display:flex;gap:4px;align-items:center;font-size:12px"><input type="checkbox" id="auto" checked> cálculo automático</label>
+  <button id="bCalc" class="prim" title="Ctrl+Enter">▶ Calcular</button>
+  <button id="bDxf" title="Planos DXF (AutoCAD): plantas, cortes y planilla de doblado">Planos DXF</button>
+  <button id="bMem" title="Memoria de cálculo (Arial) — imprimir o guardar PDF">Memoria</button>
+  <button id="bWord" title="Memoria de cálculo en Word (.doc)">Memoria Word</button>
+  <input type="file" id="fAbrir" accept=".json" class="hidden">
+</header>
+<div class="app">
+  <aside>
+    <div class="tabs" id="tabsL">
+      <button data-t="gen" class="on">General</button>
+      <button data-t="suelo">Suelo</button>
+      <button data-t="arm">Armadura</button>
+    </div>
+    <div class="panel" id="pGen"></div>
+    <div class="panel hidden" id="pSuelo"></div>
+    <div class="panel hidden" id="pArm"></div>
+  </aside>
+  <main>
+    <div class="tabs" id="tabsM">
+      <button data-t="cols" class="on">Columnas y cargas</button>
+      <button data-t="planta">Planta</button>
+      <button data-t="axo">Axonométrica</button>
+      <button data-t="cortes">Cortes</button>
+      <button data-t="ref">Refuerzos</button>
+      <button data-t="res">Resultados</button>
+      <button data-t="plan">Planilla de doblado</button>
+    </div>
+
+    <!-- COLUMNAS -->
+    <section id="vCols" class="split" style="flex-direction:column">
+      <div class="tb">
+        <button id="cAdd">+ Columna</button>
+        <button id="cGrid">Generar grilla…</button>
+        <button id="cPaste">Pegar desde Excel…</button>
+        <span style="width:10px"></span>
+        <label>Últimas = <input id="cFac" type="number" step="0.05" value="1.4" style="width:60px"> × servicio</label>
+        <button id="cFacB">Aplicar</button>
+        <span class="sp" style="flex:1"></span>
+        <span class="help" id="cInfo"></span>
+      </div>
+      <div class="view" style="padding:8px"><table class="t" id="tCols"></table>
+        <p class="help" style="max-width:900px">Coordenadas del centro de la columna medidas desde la esquina inferior izquierda de la platea (0,0). N positiva = compresión (hacia abajo). M<sub>x</sub> gira alrededor del eje X, M<sub>y</sub> alrededor del eje Y, M<sub>z</sub> alrededor del eje vertical. Unidades: m, kN, kNm. Las cargas de servicio verifican el suelo; las últimas dimensionan el hormigón armado.</p>
+      </div>
+    </section>
+
+    <!-- PLANTA -->
+    <section id="vPlanta" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="tb">
+        <label>Mostrar <select class="selCampo" id="campoP"></select></label>
+        <label><input type="checkbox" id="pBand" checked> bandas</label>
+        <label><input type="checkbox" id="pMalla"> malla</label>
+        <label><input type="checkbox" id="pRefs" checked> refuerzos</label>
+        <label><input type="checkbox" id="pPunz"> punzonado</label>
+        <label><input type="checkbox" id="pCort" checked> líneas de corte</label>
+        <span class="lg"><span><i style="border-color:var(--inf)"></i>refuerzo inferior</span><span><i style="border-color:var(--sup);border-style:dashed"></i>refuerzo superior</span></span>
+      </div>
+      <div class="view"><canvas id="cvPlanta"></canvas></div>
+    </section>
+
+    <!-- AXO -->
+    <section id="vAxo" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="tb">
+        <label>Mostrar <select class="selCampo" id="campoA"></select></label>
+        <label>Exageración <input type="range" id="aExag" min="0" max="4" step="0.1" value="1" style="width:110px"></label>
+        <label><input type="checkbox" id="aMalla"> malla</label>
+        <button data-v="iso">Isométrica</button><button data-v="top">Planta</button><button data-v="fr">Frente</button><button data-v="lat">Lateral</button>
+        <span class="help">Arrastrar: girar · Rueda: zoom · Shift+arrastrar: desplazar</span>
+      </div>
+      <div class="view"><canvas id="cvAxo"></canvas></div>
+    </section>
+
+    <!-- CORTES -->
+    <section id="vCortes" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="tb">
+        <label><input type="radio" name="cdir" value="x" checked> Corte A-A (paralelo a X) en y =</label>
+        <input type="number" id="kY" step="0.05" style="width:80px"><select id="kYs" style="width:auto"></select>
+        <span style="width:12px"></span>
+        <label><input type="radio" name="cdir" value="y"> Corte B-B (paralelo a Y) en x =</label>
+        <input type="number" id="kX" step="0.05" style="width:80px"><select id="kXs" style="width:auto"></select>
+      </div>
+      <div class="view"><canvas id="cvCorte" style="height:1050px"></canvas></div>
+    </section>
+
+    <!-- REFUERZOS -->
+    <section id="vRef" class="hidden" style="display:flex;flex-direction:column;flex:1;min-height:0">
+      <div class="tb">
+        <button id="rAdd">+ Zona de refuerzo</button>
+        <button id="rCol">Refuerzo bajo columna…</button>
+        <button id="rAuto" class="prim" title="Calcula y agrega refuerzos donde la malla base no alcanza">Sugerir refuerzos automáticos</button>
+        <button id="rDelAuto">Borrar automáticos</button>
+        <label>Mapa <select id="rCampo" style="width:auto">
+          <option value="umax">Utilización (máx.)</option><option value="uxb">Utilización inf. X</option><option value="uyb">Utilización inf. Y</option><option value="uxt">Utilización sup. X</option><option value="uyt">Utilización sup. Y</option>
+          <option value="asxb">As req. inf. X</option><option value="asyb">As req. inf. Y</option><option value="asxt">As req. sup. X</option><option value="asyt">As req. sup. Y</option></select></label>
+      </div>
+      <div class="split">
+        <div class="izq" style="padding:8px"><table class="t" id="tRef"></table>
+          <p class="help">Cada zona agrega barras en una capa (inferior/superior) y dirección (X/Y) dentro del rectángulo x₁–x₂, y₁–y₂ (m). Las barras se intercalan con la malla base. La longitud de la zona en la dirección de las barras es la longitud de las barras de refuerzo (incluya el anclaje).</p>
+        </div>
+        <div class="der"><canvas id="cvRef" style="width:100%;height:100%;display:block"></canvas></div>
+      </div>
+    </section>
+
+    <!-- RESULTADOS -->
+    <section id="vRes" class="hidden view"></section>
+    <!-- PLANILLA -->
+    <section id="vPlan" class="hidden view"></section>
+  </main>
+</div>
+<footer><span class="est" id="fEst">—</span><span id="fInfo"></span><span class="sp" style="flex:1"></span><span>CIRSOC 201-2005 · Placa Mindlin (MITC4) sobre resortes de Winkler</span></footer>
+<div id="tip"></div>
+
+<script src="js/fem.js"></script>
+<script src="js/design.js"></script>
+<script src="js/views.js"></script>
+<script src="js/dxf.js"></script>
+<script src="js/memoria.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
